@@ -36,7 +36,7 @@ function checkout(callback) {
 }
 
 
-function status(callback) {
+function status(checkoutId, callback) {
     var path=`/v1/checkouts/${checkoutId}/payment`;
     path += '?entityId=8a8294185a184b44015a18be521a02b0';
     var options = {
@@ -58,23 +58,22 @@ function status(callback) {
     sendRequest.end();
 }
 var checkoutId;
-checkout((responseData => {
-    checkoutId = responseData['id']
-}))
 
-app.get('/', (req, res) => {// var checkoutId;  //It seems it would be better to setup checkoutId from here instead, but it doesn't seem to be populated. To be investigated.
-			    // checkout((responseData => {
-			    // 	checkoutId = responseData['id']
-			    // }))
-			    res.send(`<h1>New Year Eve Music Fest</h1>
+app.get('/', (req, res) => {var checkoutId;
+			    checkout((responseData => {
+			    	checkoutId = responseData['id'];
+				res.send(`<h1>New Year Eve Music Fest</h1>
 Admit: 1 <br>
 Amount: R85.00 <script src="https://test.letswhoosh.co.za/v1/paymentWidgets.js?checkoutId=${checkoutId}"></script>\
-                                     <form action="http://localhost:3000/yes" class="paymentWidgets" data-brands="VISA MASTER AMEX"></form>`)
-			    console.log('firstCheckoutId: ' + checkoutId)
+                                     <form action="http://localhost:3000/yes" class="paymentWidgets" data-brands="VISA MASTER AMEX"></form>`);
+				console.log('firstCheckoutId: ' + checkoutId);
+			    }))
+			    
 			   })
-app.get('/yes', (req, res) => {var statusResultCode
+app.get('/yes', (req, res) => {var statusResultCode;
+			       var checkoutId = req.query.id;
 			       console.log('checkoutId: ' + checkoutId)
-			       status((responseData => {
+			       status(checkoutId, (responseData => {
 				   statusResultCode = responseData['result']['code']
 
 				   if (statusResultCode === '000.100.110')
