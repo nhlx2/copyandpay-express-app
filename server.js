@@ -1,9 +1,14 @@
-const express = require('express')
-const app = express()
+var express = require('express');
+var app = express();
 const port = 3000
 
 var https = require('https');
 var querystring = require('querystring');
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
 
 function checkout(callback) {
     var path='/v1/checkouts';
@@ -62,11 +67,8 @@ var checkoutId;
 app.get('/', (req, res) => {var checkoutId;
 			    checkout((responseData => {
 			    	checkoutId = responseData['id'];
-				res.send(`<h1>New Year Eve Music Fest</h1>
-Admit: 1 <br>
-Amount: R85.00 <script src="https://test.letswhoosh.co.za/v1/paymentWidgets.js?checkoutId=${checkoutId}"></script>\
-                                     <form action="http://localhost:3000/yes" class="paymentWidgets" data-brands="VISA MASTER AMEX"></form>`);
 				console.log('firstCheckoutId: ' + checkoutId);
+				res.render('index.html', {checkoutId: checkoutId});
 			    }))
 			    
 			   })

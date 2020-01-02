@@ -9,6 +9,7 @@
   "author": "nhlx2",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "ejs": "~1.0.0"
   }
 }
